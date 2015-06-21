@@ -56,7 +56,7 @@ public class Newyorktimes_topstories {
 		org.json.JSONObject jo = (org.json.JSONObject) new JSONTokener(IOUtils.toString(new URL("http://api.nytimes.com/svc/topstories/v1/home.json?api-key=a8759b9b0b79ba994111a7e4a27c977c:17:71948109"))).nextValue();
 		final Connection conn = DBConnection.createConnection();
 		//System.out.println(jo);
-    	AWSCredentials credentials =new BasicAWSCredentials("AKIAJD7MHVEXYV5RN2FA","yPabMi7YRZnOYh3iexpYp2KVmucxhdNQDnPtSY05"); 
+    	AWSCredentials credentials =new BasicAWSCredentials("");
     	final AmazonSQS sqs= new AmazonSQSClient(credentials);
 		 Region usEast1 = Region.getRegion(Regions.US_EAST_1);
 		 sqs.setRegion(usEast1);
@@ -64,11 +64,11 @@ public class Newyorktimes_topstories {
 		 CreateQueueRequest createQueueRequest = new CreateQueueRequest("NewsQueue");
  		final String  newsQueueUrl = sqs.createQueue(createQueueRequest).getQueueUrl();
 
-		
-		
+
+
 		   //String key = (String)keys.next();
 		    //System.out.println(key);
-		     
+
 		    JSONArray arr = jo.getJSONArray("results");
 
 		    for (int i = 0; i < arr.length(); i++)
@@ -89,21 +89,21 @@ public class Newyorktimes_topstories {
 		        //(JSONArray)
 		     if( arr.getJSONObject(i).get("multimedia") != null)
 		     {
-		     
+
 			   // JSONObject arr1 = arr.getJSONObject(i).getJSONObject("multimedia");
 		String multimedia  = arr.getJSONObject(i).get("multimedia").toString();
 		if(multimedia!=null)
 		{
 	    multimedia = multimedia.replace("[", "");
 	    multimedia = multimedia.replace("]", "");
-	   
+
 	    JSONObject jsonObj = new JSONObject(multimedia);
 	    System.out.println(jsonObj);
 	    String imgurl = jsonObj.getString("url");
-    
+
 		PreparedStatement preparedStatement = null;
 		preparedStatement = conn.prepareStatement("insert into new_york_time_headlines_api values(?,?,?,?)");
-		
+
 		preparedStatement.setString(1,title );
 		preparedStatement.setString(2,news );
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -124,25 +124,25 @@ public class Newyorktimes_topstories {
 		request1.withMessageAttributes(messageAttributes);
 		sqs.sendMessage(request1);
 		System.out.println("\nAdded to queue");
-	    
+
 
 
 		}
-		
-			
-		
+
+
+
 		     }
 
-		     
-	
+
+
 	/*
 String xml = XML.toString(jo);
-DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
+DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 DocumentBuilder builder = factory.newDocumentBuilder();
-Document document = builder.parse( new InputSource( new StringReader( xml ) ) );  
+Document document = builder.parse( new InputSource( new StringReader( xml ) ) );
 */
 
 		}
-	
+
 	}
 }

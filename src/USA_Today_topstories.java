@@ -49,7 +49,7 @@ public class USA_Today_topstories {
 		final Connection conn = DBConnection.createConnection();
 		URL url = new URL("http://api.usatoday.com/open/articles/topnews?api_key=ftwdpg9t8evt9ar7u4yj3xgs");
 		URLConnection connection = url.openConnection();
-    	AWSCredentials credentials =new BasicAWSCredentials("AKIAJD7MHVEXYV5RN2FA","yPabMi7YRZnOYh3iexpYp2KVmucxhdNQDnPtSY05"); 
+    	AWSCredentials credentials =new BasicAWSCredentials("");
     	final AmazonSQS sqs= new AmazonSQSClient(credentials);
    	 Region usEast1 = Region.getRegion(Regions.US_EAST_1);
 		AmazonSNSClient snsservice = new AmazonSNSClient(credentials); //create SNS service
@@ -84,7 +84,7 @@ public class USA_Today_topstories {
 		        String[] parts = date.split(", ");
 		        String dateinfo = parts[1];
 		        String datemysql = dateinfo.replace("GMT","");
-		        Date datesql = simpleDateFormat.parse(datemysql);	
+		        Date datesql = simpleDateFormat.parse(datemysql);
 		        System.out.println("Date to be inserted: "+datesql);
 		        Timestamp timestamp = new Timestamp(datesql.getTime());
 				PreparedStatement preparedStatement = null;
@@ -106,9 +106,9 @@ public class USA_Today_topstories {
 	    	    PublishRequest publishReq = new PublishRequest().withTopicArn(createRes.getTopicArn()).withMessage(title +","+description+","+datesql);
 	    	    snsservice.publish(publishReq);
 	            System.out.println("published");
-	            
+
 			}
-			
+
 	}
 	}
 }
